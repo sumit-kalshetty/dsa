@@ -1,0 +1,272 @@
+Name:Sumit Sanjivkumar Kalshetty
+Sub:DSA(Lab) Roll No:2125
+Div:A
+
+Problem Statement: 2.Stack-
+Write a program to implement stack as an abstract data type using linked list and use this ADT for 
+conversion of infix expression to postfix, prefix and evaluation of postfix/prefix expression. 
+
+****************************************************************************PROGRAM************************************************************************************
+#include <iostream>
+#include <string>
+#include <cmath> // For pow function using
+
+
+namespace std;
+// Stack class definition class
+Stack {
+  typedef struct Node { char
+     data;
+     struct Node* next;
+   } Node;
+   Node* top = nullptr;
+  public:
+    bool is_empty() const;
+    void push(char x); char
+    pop();
+   char get_top() const;
+  };
+
+// Get top of the stack
+char Stack::get_top() const { if
+   (is_empty()) {
+      throw runtime_error("Stack is empty");
+ }
+return top->data;
+}
+
+
+// Check if stack is empty bool
+Stack::is_empty() const {
+  return (top == nullptr);
+}
+
+
+// Push an element onto the stack void
+Stack::push(char x) {
+  Node* newNode = new Node; if
+  (newNode) {
+     newNode->data = x;
+     newNode->next = top;
+     top = newNode;
+  } else {
+      cout << "\nStack is full\n";
+  }
+}
+
+
+
+// Pop an element from the stack char
+Stack::pop() {
+  if (is_empty()) {
+    throw runtime_error("Stack is empty");
+  }
+  Node* temp = top;
+  top = top->next;
+  char data = temp->data;
+  delete temp;
+  return data;
+}
+
+
+
+// Calculate result based on the operator int
+result(int s1, int s2, char optr) {
+  switch (optr) {
+    case '+':
+        return s1 + s2;
+    case '-':
+        return s1 - s2;
+    case '*':
+        return s1 * s2;
+    case '/':
+        if (s2 == 0) throw runtime_error("Division by zero"); return s1 /
+        s2;
+    case '^':
+        return static_cast<int>(pow(s1, s2)); default:
+        throw runtime_error("Unknown operator");
+   }
+}
+
+
+
+// Determine the priority of operators int
+priority(char a) {
+   switch (a) {
+     case '+':
+     case '-':
+         return 1;
+     case '*':
+     case '/':
+         return 2;
+     case '^':
+         return 3;
+      default:
+         return 0;
+    }
+}
+
+
+
+// Convert infix expression to prefix notation void
+inftopre(const string& ins) {
+Stack s, k;
+int i;
+
+
+for (i = ins.length() - 1; i >= 0; i--) { switch
+   (ins[i]) {
+       case ')':
+           s.push(ins[i]);
+           break;
+       case '(':
+           while (!s.is_empty() && s.get_top() != ')')
+             k.push(s.pop());
+         s.pop(); // Remove ')'
+         break;
+       case '+':
+       case '-':
+       case '*':
+       case '/':
+       case '^':
+         while (!s.is_empty() && priority(s.get_top()) > priority(ins[i])) k.push(s.pop());
+         s.push(ins[i]);
+         break;
+      default:
+      k.push(ins[i]);
+   }
+}
+
+
+while (!s.is_empty()) cout
+    << s.pop();
+
+
+while (!k.is_empty()) cout
+   << k.pop();
+   cout << "\n\nis the prefix expression\n\n";
+}
+
+
+
+// Convert infix expression to postfix notation void
+inftopost(const string& ins) {
+Stack s;
+cout << "\n\n";
+for (int i = 0; i < ins.length(); i++) { switch
+    (ins[i]) {
+       case '(':
+         s.push(ins[i]);
+         break;
+       case ')':
+         while (!s.is_empty() && s.get_top() != '(') cout <<
+            s.pop();
+         s.pop(); // Remove '('
+         break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '^':
+             while (!s.is_empty() && priority(s.get_top()) >= priority(ins[i])) cout <<
+                s.pop();
+              s.push(ins[i]);
+              break;
+              default:
+                  cout << ins[i];
+         }
+    }
+
+
+while (!s.is_empty()) cout
+   << s.pop();
+cout << "\n\nis the postfix expression\n\n";
+}
+
+
+
+// Evaluate a postfix expression void
+posteva(const string& ins) {
+  Stack s;
+  int s1, s2;
+  cout << "\n\n";
+  for (int i = 0; i < ins.length(); i++) {
+     switch (ins[i]) {
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '^':
+           if (!s.is_empty())
+              s2 = s.pop() - '0';
+           if (!s.is_empty())
+               s1 = s.pop() - '0'; s.push(result(s1,
+            s2, ins[i]) + '0'); break;
+           default:
+              s.push(ins[i]);
+        }
+    }
+  if (!s.is_empty())
+     cout << "\n\nRESULT=" << s.pop() - '0'; cout
+   << "\n\n";
+  }
+
+
+
+// Evaluate a prefix expression void
+preeva(const string& ins) {
+   Stack s;
+   int s1, s2;
+   cout << "\n\n";
+    for (int i = ins.length() - 1; i >= 0; i--) { switch
+        (ins[i]) {
+           case '+':
+           case '-':
+           case '*':
+           case '/':
+           case '^':
+              if (!s.is_empty())
+                 s1 = s.pop() - '0';
+              if (!s.is_empty())
+                 s2 = s.pop() - '0'; s.push(result(s1,
+               s2, ins[i]) + '0'); break;
+              default:
+                s.push(ins[i]);
+           }
+     }   
+
+
+if (!s.is_empty())
+    cout << "\n\nRESULT=" << s.pop() - '0'; cout
+<< "\n\n";
+}
+
+
+int main() {
+   string infix, postfix, prefix;
+
+   cout << "Enter infix expression: ";
+   getline(cin, infix);
+
+   cout << "Infix to Postfix: ";
+   inftopost(infix);
+
+   cout << "Infix to Prefix: ";
+   inftopre(infix);
+
+   cout << "Enter postfix expression: ";
+   getline(cin, postfix);
+
+   cout << "Postfix Evaluation: ";
+   posteva(postfix);
+
+   cout << "Enter prefix expression: ";
+   getline(cin, prefix);
+
+  cout << "Prefix Evaluation: ";
+  preeva(prefix);
+return 0;
+}
+
+
+
