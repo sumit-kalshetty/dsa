@@ -1,0 +1,337 @@
+//3,7,15 //adt 2pract
+#include<iostream>
+#include<string>
+using namespace std;
+
+//declarations
+class stack
+{
+typedef struct node
+{
+char data;
+struct node *next;
+}node;
+
+node *top=NULL;
+public:
+int is_empty();
+void display();
+int count();
+void push(char x);
+char pop();
+char get_top();
+};
+
+//get top
+char stack::get_top()
+{
+return top->data;
+}
+
+
+//display
+void stack::display()
+{
+for(node *P=top;P!=NULL;P=P->next)
+{
+cout<<"\n --------";
+cout<<"\n[   "<<P->data<<"   ]";
+}
+cout<<"\n --------";
+}
+
+
+
+//push
+void stack::push(char x)
+{
+node *St=new node;
+if(St)
+{
+St->data=x;
+St->next=top;
+top=St;
+}
+else
+cout<<"\nStack is full\n";
+}
+
+//is empty
+int stack::is_empty()
+{
+return(top==NULL);
+}
+
+//pop
+char stack::pop()
+{
+node *St=top;
+top=top->next;
+char a=St->data;
+delete St;
+return(a);
+}
+
+//Result calculations
+int result(int s1,int s2,char optr)
+{
+switch(optr)
+{
+case '+':
+ return(s1+s2);
+
+case '-':
+ return(s1-s2);
+
+case '*':
+ return(s1*s2);
+
+case '/':
+ return(s1/s2);
+
+case '^':
+ return(s1^s2);
+
+default:
+ return 0;
+}
+}
+
+//   Priority Cheak
+int priority(char a)
+{
+switch(a)
+{
+case '+':
+case '-':
+return(1);
+
+case '*':
+case '/':
+return(2);
+
+case '^':
+case '$':
+case '!':
+return(1);
+
+default:
+return(0);
+}
+}
+
+
+void inftopre(char ins[])
+{
+stack s,k;
+int i,x;
+
+//to reverse
+for(i=0;ins[i]!='\0';i++);
+i--;
+
+cout<<"\n\n\n\n\n\n\n";
+for(x=i;x>=0;x--)
+switch(ins[x])
+ {
+
+case ')':
+s.push(ins[x]);
+break;
+
+case '(':
+while(!s.is_empty() && s.get_top()!=')' )
+k.push(s.pop());
+s.pop();
+break;
+
+
+case '+':
+case '-':
+case '*':
+case '/':
+case '^':
+
+while(!s.is_empty() && priority(s.get_top())>priority(ins[x]) )
+k.push(s.pop());
+s.push(ins[x]);
+break;
+
+default:
+k.push(ins[x]);
+
+ }
+
+while(!s.is_empty())
+cout<<s.pop();
+
+while(!k.is_empty())
+cout<<k.pop();
+cout<<"\n\nis the prefix expression\n\n\n\n\n";
+
+}
+
+
+
+
+void inftopost(char ins[])
+{
+stack s;
+cout<<"\n\n\n\n\n\n\n";
+for(int i=0;ins[i]!='\0';i++)
+switch(ins[i])
+ {
+
+case '(':
+s.push(ins[i]);
+break;
+
+case ')':
+while(!s.is_empty() && s.get_top()!='(' )
+cout<<s.pop();
+s.pop();
+break;
+
+
+case '+':
+case '-':
+case '*':
+case '/':
+case '^':
+
+while(!s.is_empty() && priority(s.get_top())>=priority(ins[i]) )
+cout<<s.pop();
+s.push(ins[i]);
+break;
+
+default:
+cout<<ins[i];
+
+ }
+
+while(!s.is_empty())
+cout<<s.pop();
+cout<<"\n\nis the postfix expression\n\n";
+}
+
+
+
+void posteva(char ins[])
+{
+stack s;
+int s1,s2;
+cout<<"\n\n\n";
+for(int i=0;ins[i]!='\0';i++)
+switch(ins[i])
+ {
+
+case '+':
+case '-':
+case '*':
+case '/':
+case '^':
+
+if(!s.is_empty() )
+s2=s.pop()-48;
+
+if(!s.is_empty() )
+s1=s.pop()-48;
+
+s.push(result(s1,s2,ins[i]) + 48);
+break;
+
+default:
+s.push(ins[i]);
+
+ }
+
+if(!s.is_empty())
+cout<<"\n\n\nRESULT="<<s.pop()-48;
+cout<<"\n\n";
+}
+
+
+
+
+
+void preeva(char ins[])
+{
+
+stack s;
+int s1,s2,i;
+//to reverse
+for(i=0;ins[i]!='\0';i++);
+i--;
+cout<<"\n\n\n\n\n\n\n";
+for(int x=i;x>=0;x--)
+switch(ins[x])
+{
+case '+':
+case '-':
+case '*':
+case '/':
+case '^':
+
+if(!s.is_empty() )
+s1=s.pop()-48;
+
+if(!s.is_empty() )
+s2=s.pop()-48;
+
+s.push(result(s1,s2,ins[x]) + 48);
+break;
+
+default:
+s.push(ins[x]);
+
+}
+
+if(!s.is_empty())
+cout<<"\n\n\nRESULT="<<s.pop()-48;
+
+cout<<"\n\n\n\n\n\n\n";
+
+}
+int main()
+{
+stack s;
+int ch,num;
+char a,ins[20];
+do
+{
+cout<<"The following operation are available :\n1.Infix to Prefix\n2.Infix to Postfix \n3.Postfix Evalution \n4.Prefix Evaluation \n5.EXIT\nEnter your choice:";
+cin>>ch;
+switch(ch)
+{
+
+case 1:
+cout<<"\nEnter the Infix Expression:";
+cin>>ins;
+inftopre(ins);
+break;
+case 2:
+cout<<"\nEnter the Infix Expression:";
+cin>>ins;
+inftopost(ins);
+break;
+case 3:
+cout<<"\nEnter the Postfix Expression:";
+cin>>ins;
+posteva(ins);
+break;
+case 4:
+cout<<"\nEnter the Infix Expression:";
+cin>>ins;
+preeva(ins);
+break;
+case 5:
+cout<<"\n\n You choosed to Exit";
+break;
+default:
+cout<<"\n Invalid choice \n\n Try again!";
+}
+}
+while(ch!=5);
+return 0;
+}
+
